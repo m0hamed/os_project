@@ -8,17 +8,15 @@ public class Semaphore {
 	}
 
 	public synchronized void up() {
-		if (count >= 0) {
-			count++;
-		} else {
+		if (count < 0) {
 			this.notify();
 		}
+		count++;
 	}
 
 	public synchronized void down() {
-		if (count > 0) {
-			count++;
-		} else {
+		count--;
+		if (count < 0) {
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
