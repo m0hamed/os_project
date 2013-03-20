@@ -3,6 +3,7 @@ package lounge;
 import java.util.ArrayList;
 
 import lounge_guests.Guest;
+import synchronisation_primitives.Barrier;
 import synchronisation_primitives.Semaphore;
 
 public class StarTrekLounge{
@@ -17,6 +18,8 @@ public class StarTrekLounge{
 	private Semaphore android = new Semaphore(0);
 	private Semaphore alien = new Semaphore(0);
 	private Semaphore guest_mutex = new Semaphore(1);
+	private Barrier lounge_door = new Barrier(3);
+	private static final int  HUMAN = 0, ANDROID = 1, ALIEN = 2;
 	
 	//TODO print transactions happening!
 	public void enter_lounge(Guest g){
@@ -28,7 +31,7 @@ public class StarTrekLounge{
 			return;
 		}
 		switch(g.getType()){
-		case 0: {
+		case HUMAN: {
 			if(humans_inside == 8){
 				human.down();
 			}
@@ -41,7 +44,7 @@ public class StarTrekLounge{
 			mutex.up();
 			break;
 		}
-		case 1: {
+		case ANDROID: {
 			if(androids_inside == 8){
 				android.down();
 			}
@@ -54,7 +57,7 @@ public class StarTrekLounge{
 			mutex.up();
 			break;
 		}
-		case 2: {
+		case ALIEN: {
 			if(aliens_inside == 8){
 				alien.down();
 			}
@@ -75,6 +78,15 @@ public class StarTrekLounge{
 	}
 	
 	public void leave_lounge(Guest g){
-		
+		if(lounge_closed){
+			guest_mutex.down();
+			guests.remove(g);
+			guest_mutex.up();
+			return;
+		}
+		lounge_door.wait_on_barrier();
+		guest_mutex.down();
+		guests.remove(g);
+		guest_mutex.up();
 	}
 }

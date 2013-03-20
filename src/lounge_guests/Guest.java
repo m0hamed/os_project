@@ -1,12 +1,13 @@
 package lounge_guests;
 
 public class Guest extends Thread {
-	private int type; // 0,1,2 are Humans, Androids and Aliens Respectively
+	private int type;
+	private static final int HUMAN = 0;
 	private String name;
 
 	public Guest() {
 		super();
-		type = 0;
+		type = HUMAN;
 		name = "";
 	}
 
