@@ -89,4 +89,12 @@ public class StarTrekLounge{
 		guests.remove(g);
 		guest_mutex.up();
 	}
+	
+	public static void main(String[] args){
+		//instantiate guests
+		//start the threads
+		//add prints in the code above
+		//enjoy the simulation :P
+		System.out.println("Be55");
+	}
 }
