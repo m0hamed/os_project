@@ -1,12 +1,15 @@
 package lounge_guests;
 
+import lounge.Lounge;
+
 public class Guest extends Thread {
 	private int type;
-	private static final int HUMAN = 0;
 	private String name;
-
+	public static final int HUMAN = 0;
+	public static final int ALIEN = 1;
+	public static final int ANDROID = 2;
+	
 	public Guest() {
-		super();
 		type = HUMAN;
 		name = "";
 	}
@@ -23,5 +26,11 @@ public class Guest extends Thread {
 
 	public String getGuestName() {
 		return name;
+	}
+	
+	public void run() {
+		if(Lounge.enter(this)) {
+			Lounge.leave(this);
+		}
 	}
 }
