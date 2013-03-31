@@ -145,7 +145,9 @@ public class Lounge{
 			System.out.println(g.getGuestName()+" is couldn't leave now!"); 
 			return false;
 		}
-	}
+		}
+		mutex.up();
+		System.out.println("Waiting by door to exit, from "+g.getGuestName());
 		lounge_door.wait_on_barrier();
 		System.out.println("Bye for the thrice of you, Fellas!");
 		guest_mutex.down();
