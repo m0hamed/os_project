@@ -47,6 +47,7 @@ public class Lounge{
 				}
 				if(lounge_guests >= GUEST_COUNT_MAX) {
 					mutex.up();
+					System.out.println("Sorry! The lounge is closed, "+g.getGuestName());
 					return false;
 				}
 				humans_inside++;
@@ -66,6 +67,7 @@ public class Lounge{
 				}
 				if(lounge_guests >= GUEST_COUNT_MAX) {
 					mutex.up();
+					System.out.println("Sorry! The lounge is closed, "+g.getGuestName());
 					return false;
 				}
 				androids_inside++; 
@@ -85,6 +87,7 @@ public class Lounge{
 				}
 				if(lounge_guests >= GUEST_COUNT_MAX) {
 					mutex.up();
+					System.out.println("Sorry! The lounge is closed, "+g.getGuestName());
 					return false;
 				}
 				aliens_inside++;
@@ -102,6 +105,7 @@ public class Lounge{
 	public static boolean leave(Guest g){
 		if(lounge_closed){
 			guest_mutex.down();
+			System.out.println("Lounge is closed! Bye Bye "+g.getGuestName());
 			guests.remove(g);
 			guest_mutex.up();
 			return false;
@@ -109,6 +113,7 @@ public class Lounge{
 		switch(g.getType()){
 		case Guest.HUMAN: {
 			human_leaving.down();
+			System.out.println("Waiting by the door Human, "+g.getGuestName());
 			mutex.down();
 			if(humans_inside == LOUNGE_SIZE-2){
 				human_entering.up();
@@ -117,28 +122,45 @@ public class Lounge{
 			break;
 		}
 		case Guest.ANDROID: {
-			
+			android_leaving.down();
+			System.out.println("Waiting by the door Android, "+g.getGuestName());
+			mutex.down();
+			if(androids_inside == LOUNGE_SIZE-2){
+				android_entering.up();
+			}
+			android_leaving.up();
 			break;
 		}
 		case Guest.ALIEN: {
-			
+			alien_leaving.down();
+			System.out.println("Waiting by the door Alien, "+g.getGuestName());
+			mutex.down();
+			if(aliens_inside == LOUNGE_SIZE-2){
+				alien_entering.up();
+			}
+			alien_leaving.up();
 			break;
 		}
-		default: return false;
+		default: {
+			System.out.println(g.getGuestName()+" is couldn't leave now!"); 
+			return false;
+		}
 	}
-		
 		lounge_door.wait_on_barrier();
+		System.out.println("Bye for the thrice of you, Fellas!");
 		guest_mutex.down();
 		guests.remove(g);
+		System.out.println(g.getGuestName()+" is leaving now");
 		guest_mutex.up();
 		return true;
 	}
 	
 	public static void main(String[] args){
-		//instantiate guests
-		//start the threads
-		//add prints in the code above
-		//enjoy the simulation :P
-		System.out.println("Be55");
+		Guest g1 = new Guest(Guest.HUMAN, "Nourhan");
+		Guest g2 = new Guest(Guest.ANDROID, "Andy");
+		Guest g3 = new Guest(Guest.ALIEN, "Alio");	
+		g1.start();
+		g2.start();
+		g3.start();
 	}
 }
