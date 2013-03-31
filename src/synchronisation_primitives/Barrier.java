@@ -1,10 +1,12 @@
 package synchronisation_primitives;
 
 public class Barrier {
+	private int initial;
 	private int count;
 	private final int upperBound;
 	
 	public Barrier(int initial) {
+		this.initial = initial;
 		count = initial;
 		upperBound = initial;
 	}
@@ -21,5 +23,10 @@ public class Barrier {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public synchronized void reset() {
+		count = initial;
+		this.notifyAll();
 	}
 }
