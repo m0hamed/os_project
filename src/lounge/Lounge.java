@@ -147,9 +147,7 @@ public class Lounge{
 		}
 		}
 		mutex.up();
-		System.out.println("Waiting by door to exit, from "+g.getGuestName());
 		lounge_door.wait_on_barrier();
-		System.out.println("Bye for the thrice of you, Fellas!");
 		guest_mutex.down();
 		guests.remove(g);
 		System.out.println(g.getGuestName()+" is leaving now");
@@ -160,9 +158,16 @@ public class Lounge{
 	public static void main(String[] args){
 		Guest g1 = new Guest(Guest.HUMAN, "Nourhan");
 		Guest g2 = new Guest(Guest.ANDROID, "Andy");
-		Guest g3 = new Guest(Guest.ALIEN, "Alio");	
+		Guest g3 = new Guest(Guest.ALIEN, "Alio");
+		Guest g4 = new Guest(Guest.HUMAN, "Ashraf");
+		Guest g5 = new Guest(Guest.ANDROID, "Andy2");
+		Guest g6 = new Guest(Guest.ALIEN, "Alio2");
 		g1.start();
 		g2.start();
 		g3.start();
+		g4.start();
+		g5.start();
+		g6.start();
+		
 	}
 }

@@ -10,12 +10,13 @@ public class Guest extends Thread {
 	public static final int ANDROID = 2;
 	
 	public Guest() {
+		super();
 		type = HUMAN;
 		name = "";
 	}
 
 	public Guest(int type, String name) {
-		super();
+		super(name);
 		this.type = type;
 		this.name = name;
 	}
