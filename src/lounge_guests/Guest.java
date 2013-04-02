@@ -13,6 +13,7 @@ public class Guest extends Thread {
 	private String name;
 	public int table_number = -1;
 	public Table assigned_table;
+	public boolean kicked_out;
 	
 	public Guest() {
 		type = HUMAN;
@@ -23,6 +24,7 @@ public class Guest extends Thread {
 		super(name);
 		this.type = type;
 		this.name = name;
+		kicked_out = false;
 	}
 
 	public int getType() {

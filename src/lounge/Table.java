@@ -41,5 +41,12 @@ public class Table extends Barrier {
 	public int get_guest_count() {
 		return guests_at_table;
 	}
+	
+	public void reset() {
+		for(int i=0; i<guests_at_table; i++){
+			guests.get(i).kicked_out=true;
+		}
+		super.reset();
+	}
 
 }
