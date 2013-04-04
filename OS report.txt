@@ -1,0 +1,121 @@
+OS Report:
+
+==> This part is a description of the main classes implemented in the project:
+
+The classes that was implemented in the project are:
+- class Guest extending Thread class  
+- class Cleaner extending Thread class
+- class Table extending Barrier class
+- class Lounge
+- class Barrier
+- class Semaphore 
+
+Brief description of each class of the classes stated above:
+	
+1) Description of class Guset:
+Guest is a public class extending Thread class in java. It's the class the serves for creating and
+representing all the types of guests of the lounge.
+Each guest is a thread of the class and each thread has the following attributes:
+private int type, private String name, public int table_number, public Table assigned_table and public boolean kicked_out
+Any thread of this class must have only one of these types: HUMAN, ALIEN or ANDROID.
+This class implements four methods in addition to the run method which must be implemented by any class extending Thread class in java.
+The four methods are:
+- public Guest()
+which is the default constructor method that by default create a thread of type HUMAN.
+- public Guest(int type, String name)
+which is the second constructor of this class that takes int type and String name as input and create a new guest of this type and with this name.
+- public int getType()
+which is a getter method that return the type of the guest thread.
+- public String getGuestName()
+which is a getter method that returns the name of the guest thread.
+- public void run()
+This is the method that must be implemented in any class extending thread. This method contains the code to be executed when the thread is allowed to run as when 
+start() is invoked on the thread it becomes ready and when the scheduler chooses this thread to run the code of run() will be executed.
+2) Description of class Cleaner:
+This class extends Thread class in java so each cleaner is a thread of this class with the following attributes:
+public Semaphore changed and public boolean has_run
+This is the class that is responsible for making sure that no sleeping guest will remain sleeping after the lounge closes.
+So the wake up all sleeping guests to go out.
+This class implements two methods which are:
+- public Cleaner() 
+which is the default constructor that intialize a semaphore with 0 and has_run to false.
+- public void run()
+This is the method that must be implemented in any class extending thread. This method contains the code to be executed when the thread is allowed to run as when 
+start() is invoked on the thread it becomes ready and when the scheduler chooses this thread to run the code of run() will be executed.
+
+3) Description of class Table:
+The table class inherits from the Barrier class. It helps ensure that three of the different types of people sit together before they can get to leave. It has the following methods:
+- a public constructor
+- sit_at_table and leave_table that keeps the list of guests in a table syncronised with who is actually sitting at the table
+- print_occupancy that prints the guests that are currently sitting at the table for the purpose of the simulation.
+- get_guest_count to return the number of guests in the table.
+- reset this method wakes up all threads sleeping on the barrier
+
+
+
+4) Description of class Lounge:
+This class extends the Barrier class that was also implemented in the project.
+This is the class that represents the lounge and it implements five methods.
+The five methods are:
+- public static boolean enter()
+the enter method is wrapped arround a mutex named mutex. it makes sure that the numbers of guests in side the lounge doesnt change while a thread is inside its enter method. the thread may sleep on a semaphore if the lounge is full or if there is too much of their own kind in the lounge. right before the thread sleeps it gives up the mutex and may try to aquire it again when it wakes up. This method returns true when the guest has successfully entered the lounge and can now begin to leave either if they socialised with two other species or they were kicked out. This method starts the cleaner when the lounge closes behind one of the guests.
+
+ 
+- public static boolean leave()
+the leave method is also wrapped around the same mutex as the enter method. it keeps the count of the guests inside correct and wakes up any sleeping threads so as to give them a chance to try and enter the lounge again.
+
+
+- public static void leave_all()
+this cleans out the lounge and wakes up + kickes out any sleeping threads.
+
+
+- public static boolean has_finished()
+this method returns true if the number of guests is bigger than or equal the maximum count of guests after which the lounge can close and returns false otherwise 
+which means that the lounge didn't close yet.
+- public static void start_cleaner()
+This is the method that start a cleaner thread if the lounge has finished(closed) and no cleaner thread is started yet.
+
+==> A description of how class semaphore was implemented in the project:
+A semaphore is a protected integer variable that allow and restrict access to shared resources to prevent race conditions and ensure mutual exclusion.
+Since Java doesn't provide semaphores so we implemented public class Semaphore to be used in the project. 
+Each instance of class Semaphore has count as an attribure.
+This class implements three methods including the constructor.
+The three methods are:
+- public semaphore(int intial)
+This is the constructor of class Semaphore which create an instance of the class with count equals to int intial which represents the integer varaible
+of the Semaphore.
+- public synchronized void up()
+This method acts as the ordinary up or increment method invoked on the semaphores.
+This method checks if the count of the semaphore is less than zero which in this case means a guest is sleeping on the semaphore and so it 
+calls notify() method to wake up on of the guests sleeping on the semaphore.Else, it increments the count of the semaphore by one.
+- public synchronized void down()
+This method acts as the ordinary down ar decrement invoked on the semaphores.
+This method decrements the count of the semaphore and then checks if it's less than zero it call this.wait() to make the guest wait as if it's sleeping
+on the semaphore and if the count is  not less than zero the guest will not be blocked like the oridinary semaphores 
+
+==> A description of how class barrier was implemented in the project:
+A barrier for a group of threads or processes means that any thread/process must stop at this point and wait untill all other threads/processes reach the barrier 
+so they can all proceed together.
+Since Jave also doesn't provide barriers we implemented class Barrier to be used in the project.
+Each instance of the class has three attributes which are: 
+private int initial -- which represents the intial number that will be used to reset the barrier.
+private int count -- which represents the count of threads still needed to be at the barrier to reach the Upper bound of threads needed to proceed together
+after the barrier.
+private final int upperBound -- which represents the number of threads that should be at the barrier to allow them to proceed together.
+This class implements three methods including the constructor.
+The three methods are:
+- public Barrier(int initial)
+which is the constructor that intialize the three attributes of the barrier instance to be equal to int intial.
+- public synchronized void wait_on_barrier() 
+It decrements the count of the threads still needed to reach the upper bound and then checks if count equals to zero which means that
+the number of threads blocked at the barrier now reached the upper bound so it calls notifyAll() to wake up all threads blocked at the barrier
+so the can proceed together. Else, if the count doesn't reaches zero yet this thread calls wait to be blocked at the barrier waiting for notifyAll()
+to proceed.
+- public synchronized void reset()
+This method reset the barrier by resetting the count of the barrier to intial and notifyAll() threads waiting at the barrier.
+
+==> How we used barriers and semaphores to solve the lounge problem:
+we used a single mutex named mutex to wrap all code that may check or change the current state of the lounge so as to avoid race conditions. Whenever a new thread tries to enter the lounge it makes sure that there is a free place for one of its kind in the lounge. if not it ups the mutex and downs on another semaphore that is upped whenever someone of its kind leaves the lounge. when the thread eventually enters the lounge it is assigned a table depending on the number of threads of its kind that came before it. once three threads are waiting at a table(barrier) they all decide to leave simultaineously. When 30 guests have entered the lounge the cleaner thread is started that wakes up any remaining sleeping threads and closes the lounge. we keep counters to keep track of the number of served guests,the number of served threads of each type as well as the number of threads of each type inseide the lounge. We assumed an infeinetly large lounge where tables are alocated automagically and no table can be waited on twice. 
+
+
+
